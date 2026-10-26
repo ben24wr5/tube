@@ -23,14 +23,15 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p results
-          swift build -c release 2>&1 | tee results/build-log.txt
+          swift build -c release --arch arm64 --arch x86_64 2>&1 | tee results/build-log.txt
 
       - name: Put Tube Mac Player.app together
         if: steps.build.outcome == 'success'
         run: |
           APP="Tube Mac Player.app"
           mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-          cp .build/release/TubeMacPlayer "$APP/Contents/MacOS/TubeMacPlayer"
+          cp .build/apple/Products/Release/TubeMacPlayer "$APP/Contents/MacOS/TubeMacPlayer"
+          lipo -info "$APP/Contents/MacOS/TubeMacPlayer" | tee -a results/build-log.txt
           cp Info.plist "$APP/Contents/Info.plist"
           cp Logo.png "$APP/Contents/Resources/Logo.png"
           ICONSET="$RUNNER_TEMP/AppIcon.iconset"; mkdir -p "$ICONSET"
@@ -42,6 +43,21 @@ jobs:
           codesign --force --deep --sign - "$APP"
           ditto -c -k --keepParent "$APP" "results/Tube Mac Player.zip"
           echo "Build succeeded" > results/status.txt
+
+      - name: Open the app and take real screenshots
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          mkdir -p results/screenshots
+          open "Tube Mac Player.app"
+          sleep 12
+          osascript -e 'tell application "System Events" to set frontmost of (first process whose name is "TubeMacPlayer") to true' || true
+          sleep 2
+          screencapture -x results/screenshots/1-home.png
+          sleep 10
+          screencapture -x results/screenshots/2-home-loaded.png
+          pgrep -l TubeMacPlayer > results/screenshots/running.txt || echo "not running" > results/screenshots/running.txt
+          pkill TubeMacPlayer || true
 
       - name: Note the failure
         if: steps.build.outcome != 'success'
@@ -56,6 +72,7 @@ jobs:
           git fetch origin build-results || true
           git checkout --orphan build-results-new
           git rm -rf . >/dev/null
+          git clean -fdxq
           cp -R "$RUNNER_TEMP/results/." .
           echo "${GITHUB_SHA}" > built-from.txt
           git add -A
