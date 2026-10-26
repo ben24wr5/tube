@@ -1,0 +1,66 @@
+0%: Compute target dependency graph
+Building targets in dependency order
+Target dependency graph (2 targets)
+0%: Gather provisioning inputs
+0%: Create build description
+0%: Discovering version info for swiftc
+0%: Discovering version info for clang
+0%: Discovering version info for ld
+Build description signature: 1d369fdffd412e81cd9accfef3704f51
+
+Build description path: /Users/runner/work/tube/tube/.build/apple/Intermediates.noindex/XCBuildData/1d369fdffd412e81cd9accfef3704f51.xcbuilddata
+
+0%: Create build directory $(TARGET_BUILD_DIR)
+0%: Create build directory $(OBJROOT)
+0%: Build stat cache for /Applications/Xcode_16.2.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+0%: Create build directory $(TARGET_BUILD_DIR)/Release
+0%: Create build directory $(OBJROOT)/EagerLinkingTBDs/Release
+0%: Create build directory $(TARGET_BUILD_DIR)/Release/PackageFrameworks
+0%: Write TubeMacPlayer.DependencyMetadataFileList
+0%: Write TubeMacPlayer_const_extract_protocols.json (x86_64)
+0%: Write TubeMacPlayer.SwiftFileList (x86_64)
+0%: Write TubeMacPlayer.LinkFileList (x86_64)
+0%: Write TubeMacPlayer-OutputFileMap.json (x86_64)
+0%: Write TubeMacPlayer_const_extract_protocols.json (arm64)
+0%: Write TubeMacPlayer.SwiftFileList (arm64)
+0%: Write TubeMacPlayer.LinkFileList (arm64)
+0%: Write TubeMacPlayer-OutputFileMap.json (arm64)
+46%: Planning Swift module TubeMacPlayer (x86_64)
+46%: Planning Swift module TubeMacPlayer (arm64)
+49%: Compile TubeMacPlayer (x86_64)
+49%: Compile TubeMacPlayer (arm64)
+49%: Compiling App.swift, Catalog.swift, Components.swift, ContentView.swift, DownloadManager.swift, GoLiveView.swift, Models.swift, Pages.swift, PlayerController.swift, PlayerViews.swift, SettingsView.swift, Store.swift, StoreYouTube.swift, Theme.swift, UploadView.swift, WatchView.swift, YouTubePlayer.swift, YouTubeService.swift
+49%: Compiling App.swift, Catalog.swift, Components.swift, ContentView.swift, DownloadManager.swift, GoLiveView.swift, Models.swift, Pages.swift, PlayerController.swift, PlayerViews.swift, SettingsView.swift, Store.swift, StoreYouTube.swift, Theme.swift, UploadView.swift, WatchView.swift, YouTubePlayer.swift, YouTubeService.swift
+49%: Compile 18 Swift source files (x86_64)
+49%: Compile 18 Swift source files (arm64)
+add '@preconcurrency' to suppress 'Sendable'-related warnings from module 'WebKit'
+add '@preconcurrency' to suppress 'Sendable'-related warnings from module 'WebKit'
+/Users/runner/work/tube/tube/Sources/TubeMacPlayer/YouTubePlayer.swift:2:1: warning: add '@preconcurrency' to suppress 'Sendable'-related warnings from module 'WebKit'
+import WebKit
+^
+@preconcurrency 
+
+/Users/runner/work/tube/tube/Sources/TubeMacPlayer/YouTubePlayer.swift:2:1: warning: add '@preconcurrency' to suppress 'Sendable'-related warnings from module 'WebKit'
+import WebKit
+^
+@preconcurrency 
+
+57%: Discovering Swift tasks after 'Compiling App.swift, Catalog.swift, Components.swift, ContentView.swift, DownloadManager.swift, GoLiveView.swift, Models.swift, Pages.swift, PlayerController.swift, PlayerViews.swift, SettingsView.swift, Store.swift, StoreYouTube.swift, Theme.swift, UploadView.swift, WatchView.swift, YouTubePlayer.swift, YouTubeService.swift'
+57%: Discovering Swift tasks after 'Compiling App.swift, Catalog.swift, Components.swift, ContentView.swift, DownloadManager.swift, GoLiveView.swift, Models.swift, Pages.swift, PlayerController.swift, PlayerViews.swift, SettingsView.swift, Store.swift, StoreYouTube.swift, Theme.swift, UploadView.swift, WatchView.swift, YouTubePlayer.swift, YouTubeService.swift'
+57%: Unblock downstream dependents of TubeMacPlayer (x86_64)
+57%: Unblock downstream dependents of TubeMacPlayer (arm64)
+57%: Copy TubeMacPlayer.swiftmodule (x86_64)
+57%: Link TubeMacPlayer (x86_64)
+57%: Link TubeMacPlayer (arm64)
+57%: Copy TubeMacPlayer.swiftdoc (x86_64)
+57%: Copy TubeMacPlayer.abi.json (x86_64)
+57%: Copy TubeMacPlayer.swiftmodule (arm64)
+57%: Copy TubeMacPlayer.swiftdoc (arm64)
+57%: Copy TubeMacPlayer.abi.json (arm64)
+57%: Copy TubeMacPlayer.swiftsourceinfo (x86_64)
+57%: Copy TubeMacPlayer.swiftsourceinfo (arm64)
+91%: Create universal binary TubeMacPlayer
+91%: Generate TubeMacPlayer.dSYM for TubeMacPlayer
+97%: Register execution policy exception for TubeMacPlayer
+100%: Build succeeded
+Architectures in the fat file: Tube Mac Player.app/Contents/MacOS/TubeMacPlayer are: x86_64 arm64 
