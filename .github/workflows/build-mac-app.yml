@@ -42,6 +42,11 @@ jobs:
           iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/AppIcon.icns"
           codesign --force --deep --sign - "$APP"
           ditto -c -k --keepParent "$APP" "results/Tube Mac Player.zip"
+          # Standard Mac installer: open it, drag the app onto Applications
+          DMGDIR="$RUNNER_TEMP/dmg"; mkdir -p "$DMGDIR"
+          cp -R "$APP" "$DMGDIR/"
+          ln -s /Applications "$DMGDIR/Applications"
+          hdiutil create -volname "Tube Mac Player" -srcfolder "$DMGDIR" -ov -format UDZO "results/Tube Mac Player.dmg"
           echo "Build succeeded" > results/status.txt
 
       - name: Open the app and take real screenshots
