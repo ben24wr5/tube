@@ -1,0 +1,63 @@
+name: Build Tube Mac Player
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pick the newest Xcode
+        run: sudo xcode-select -s "$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
+
+      - name: Build the app
+        id: build
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          mkdir -p results
+          swift build -c release 2>&1 | tee results/build-log.txt
+
+      - name: Put Tube Mac Player.app together
+        if: steps.build.outcome == 'success'
+        run: |
+          APP="Tube Mac Player.app"
+          mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+          cp .build/release/TubeMacPlayer "$APP/Contents/MacOS/TubeMacPlayer"
+          cp Info.plist "$APP/Contents/Info.plist"
+          cp Logo.png "$APP/Contents/Resources/Logo.png"
+          ICONSET="$RUNNER_TEMP/AppIcon.iconset"; mkdir -p "$ICONSET"
+          for s in 16 32 128 256 512; do
+            sips -z $s $s AppIcon.png --out "$ICONSET/icon_${s}x${s}.png" >/dev/null
+            sips -z $((s*2)) $((s*2)) AppIcon.png --out "$ICONSET/icon_${s}x${s}@2x.png" >/dev/null
+          done
+          iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/AppIcon.icns"
+          codesign --force --deep --sign - "$APP"
+          ditto -c -k --keepParent "$APP" "results/Tube Mac Player.zip"
+          echo "Build succeeded" > results/status.txt
+
+      - name: Note the failure
+        if: steps.build.outcome != 'success'
+        run: echo "Build failed" > results/status.txt
+
+      - name: Publish the results to the build-results branch
+        if: always()
+        run: |
+          git config user.name "Tube Mac Player builder"
+          git config user.email "builder@users.noreply.github.com"
+          cp -R results "$RUNNER_TEMP/results"
+          git fetch origin build-results || true
+          git checkout --orphan build-results-new
+          git rm -rf . >/dev/null
+          cp -R "$RUNNER_TEMP/results/." .
+          echo "${GITHUB_SHA}" > built-from.txt
+          git add -A
+          git commit -m "Build results for ${GITHUB_SHA}"
+          git push -f origin HEAD:build-results
