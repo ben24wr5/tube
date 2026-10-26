@@ -64,6 +64,21 @@ jobs:
           pgrep -l TubeMacPlayer > results/screenshots/running.txt || echo "not running" > results/screenshots/running.txt
           pkill TubeMacPlayer || true
 
+      - name: Check the starter videos and pictures can be reached
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p results
+          B=https://commondatastorage.googleapis.com/gtv-videos-bucket/sample
+          for u in $B/images/BigBuckBunny.jpg $B/BigBuckBunny.mp4 $B/ForBiggerBlazes.mp4 \
+                   https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8 \
+                   https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8 \
+                   https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8 \
+                   https://www.googleapis.com/youtube/v3/videos https://www.youtube.com/iframe_api; do
+            echo "$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 20 -r 0-1000 "$u") $u" >> results/urlcheck.txt
+          done
+          cat results/urlcheck.txt
+
       - name: Note the failure
         if: steps.build.outcome != 'success'
         run: echo "Build failed" > results/status.txt
