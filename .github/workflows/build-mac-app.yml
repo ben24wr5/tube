@@ -69,14 +69,10 @@ jobs:
         continue-on-error: true
         run: |
           mkdir -p results
-          B=https://commondatastorage.googleapis.com/gtv-videos-bucket/sample
-          for u in $B/images/BigBuckBunny.jpg $B/BigBuckBunny.mp4 $B/ForBiggerBlazes.mp4 \
-                   https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8 \
-                   https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8 \
-                   https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8 \
-                   https://www.googleapis.com/youtube/v3/videos https://www.youtube.com/iframe_api; do
-            echo "$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 20 -r 0-1000 "$u") $u" >> results/urlcheck.txt
-          done
+          while read -r u; do
+            [ -z "$u" ] && continue
+            echo "$(curl -s -o /dev/null -w '%{http_code} %{content_type} %{size_download}' -L --max-time 25 -r 0-2000 "$u") $u" >> results/urlcheck.txt
+          done < links-to-check.txt
           cat results/urlcheck.txt
 
       - name: Note the failure
