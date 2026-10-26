@@ -131,9 +131,6 @@ struct WatchView: View {
                 Button { yt.togglePopOut() } label: { Label(yt.isPoppedOut ? "Bring back" : "Pop out", systemImage: "pip.enter") }
                     .buttonStyle(PillButtonStyle(theme: theme))
                     .help("Keep watching in a small floating window")
-                Button { NSWorkspace.shared.open(video.streamURL) } label: { Label("YouTube", systemImage: "arrow.up.right.square") }
-                    .buttonStyle(PillButtonStyle(theme: theme))
-                    .help("Open this video on YouTube")
             } else if p.pipSupported {
                 Button { p.togglePiP() } label: { Label("Mini", systemImage: "pip.enter") }
                     .buttonStyle(PillButtonStyle(theme: theme))

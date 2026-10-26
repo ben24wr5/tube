@@ -64,17 +64,6 @@ jobs:
           pgrep -l TubeMacPlayer > results/screenshots/running.txt || echo "not running" > results/screenshots/running.txt
           pkill TubeMacPlayer || true
 
-      - name: Check the starter videos and pictures can be reached
-        if: always()
-        continue-on-error: true
-        run: |
-          mkdir -p results
-          while read -r u; do
-            [ -z "$u" ] && continue
-            echo "$(curl -s -o /dev/null -w '%{http_code} %{content_type} %{size_download}' -L --max-time 25 -r 0-2000 "$u") $u" >> results/urlcheck.txt
-          done < links-to-check.txt
-          cat results/urlcheck.txt
-
       - name: Note the failure
         if: steps.build.outcome != 'success'
         run: echo "Build failed" > results/status.txt

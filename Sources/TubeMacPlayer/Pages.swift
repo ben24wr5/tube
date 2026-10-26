@@ -8,6 +8,7 @@ struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 YouTubeStatus(retry: { store.loadFeed(force: true) })
+                if store.hasYouTube || !store.data.uploads.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
                         ForEach(store.categories, id: \.self) { c in
@@ -20,6 +21,7 @@ struct HomeView: View {
                                message: "Press the upload button at the top to add a video from your Mac.")
                 }
                 VideoGrid(videos: store.feed)
+                }
             }
             .padding(24)
             .padding(.bottom, 120)
@@ -45,10 +47,7 @@ struct SubscriptionsView: View {
                                message: store.hasYouTube
                                 ? "Open any YouTube video and press Subscribe. That channel's newest videos will show up here."
                                 : "Subscribe to channels and their newest videos will show up here.")
-                    if !store.hasYouTube {
-                        Text("Channels you might like").font(.headline).foregroundStyle(theme.text)
-                        channelStrip(Catalog.channels)
-                    }
+                    YouTubeStatus(retry: {})
                 } else {
                     channelStrip(store.subscribedChannels)
                     YouTubeStatus(retry: { store.loadSubscriptionsFeed() })

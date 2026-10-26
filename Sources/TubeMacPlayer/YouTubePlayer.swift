@@ -108,7 +108,7 @@ final class YouTubePlayer: NSObject, ObservableObject, WKScriptMessageHandler, W
             case 2: errorMessage = "This video link isn't valid."
             case 5: errorMessage = "This video can't play in the app's player."
             case 100: errorMessage = "This video was removed or made private."
-            case 101, 150: errorMessage = "The owner of this video only allows it to play on YouTube."
+            case 101, 150: errorMessage = "The owner of this video doesn't allow it to play in other apps."
             case -1: errorMessage = "Couldn't reach YouTube. Check your internet connection."
             default: errorMessage = "YouTube couldn't play this video (code \(code))."
             }
@@ -117,21 +117,16 @@ final class YouTubePlayer: NSObject, ObservableObject, WKScriptMessageHandler, W
         }
     }
 
-    // Links inside the player (like the YouTube logo) open in your browser.
+    // Videos only ever play inside Tube Mac Player: clicks on links inside the
+    // player (like the YouTube logo or the title) are ignored, never opened.
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
                  decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
-            NSWorkspace.shared.open(url)
-            decisionHandler(.cancel)
-            return
-        }
-        decisionHandler(.allow)
+        decisionHandler(navigationAction.navigationType == .linkActivated ? .cancel : .allow)
     }
 
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
                  for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if let url = navigationAction.request.url { NSWorkspace.shared.open(url) }
-        return nil
+        nil
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) { loadFailed(error) }
@@ -216,7 +211,7 @@ final class YouTubePlayer: NSObject, ObservableObject, WKScriptMessageHandler, W
           player = new YT.Player('p', {
             videoId: first,
             host: 'https://www.youtube.com',
-            playerVars: { autoplay: 1, start: firstStart, playsinline: 1, rel: 0, fs: 1, enablejsapi: 1,
+            playerVars: { autoplay: 1, start: firstStart, playsinline: 1, rel: 0, fs: 1, enablejsapi: 1, iv_load_policy: 3,
                           origin: '\(origin)', widget_referrer: '\(origin)' },
             events: {
               onReady: function(e){ e.target.playVideo(); },
@@ -331,9 +326,11 @@ struct YouTubeSurface: View {
                         Text(msg).font(.headline).multilineTextAlignment(.center).frame(maxWidth: 420)
                         HStack(spacing: 10) {
                             Button("Try again") { yt.retry() }
-                                .buttonStyle(PillButtonStyle(theme: theme))
-                            Button("Watch on YouTube") { NSWorkspace.shared.open(video.streamURL) }
                                 .buttonStyle(PillButtonStyle(theme: theme, prominent: true))
+                            if store.upNext(after: video).first != nil {
+                                Button("Play next video") { store.playNext() }
+                                    .buttonStyle(PillButtonStyle(theme: theme))
+                            }
                         }
                     }
                     .foregroundStyle(.white)
